@@ -86,27 +86,33 @@ Once running, visit: http://localhost:8000/docs
 
 **For accessing from your local machine when server is remote:**
 
-The server runs on `ml-compute02` (internal IP: `10.0.1.23`) but is not exposed externally. Use SSH port forwarding to access it locally:
+The server runs on `ml-compute02` (internal IP: `10.0.1.23`) but is not exposed externally. Use SSH port forwarding to access all services locally:
 
 ```bash
-# From your local machine, create SSH tunnel
-ssh -L 8000:localhost:8000 mark@ml-compute02
+# From your local machine, create SSH tunnel for all services
+ssh -L 8000:localhost:8000 -L 3000:localhost:3000 -L 11434:localhost:11434 mark@ml-compute02
 
-# Now access the API locally at:
-# http://localhost:8000/docs
-# http://localhost:8000/health
+# Now access services locally at:
+# Vision Tool Server:  http://localhost:8000/docs
+# OpenWebUI:           http://localhost:3000
+# Ollama API:          http://localhost:11434
 ```
 
 **For persistent tunnel (runs in background):**
 ```bash
-ssh -fN -L 8000:localhost:8000 mark@ml-compute02
+ssh -fN -L 8000:localhost:8000 -L 3000:localhost:3000 -L 11434:localhost:11434 mark@ml-compute02
 
 # Kill the tunnel later
 pkill -f "ssh -fN -L 8000:localhost:8000"
 ```
 
-**Tunnel breakdown:**
-- `-L 8000:localhost:8000` = Forward local port 8000 to remote localhost:8000
+**Port breakdown:**
+- `8000` = Vision Tool Server (FastAPI)
+- `3000` = OpenWebUI (web interface, maps to container port 8080)
+- `11434` = Ollama (LLM inference API)
+
+**SSH flags:**
+- `-L [local_port]:localhost:[remote_port]` = Forward local port to remote port
 - `-f` = Background the SSH connection
 - `-N` = Don't execute remote commands (tunnel only)
 

@@ -5,6 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=mark
+SupplementaryGroups=users plugdev
 WorkingDirectory=/home/mark/vision-tool-server
 ExecStart=/home/mark/vision-tool-server/venv/bin/python /home/mark/vision-tool-server/server.py
 Restart=always
