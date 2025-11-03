@@ -1,0 +1,98 @@
+{
+  "success": true,
+  "image": "/home/mark/vision-tool-server/uploads/test_face.jpg",
+  "analysis": {
+    "objects": {
+      "count": 3,
+      "detected": [
+        {
+          "label": "person",
+          "confidence": 0.87109375,
+          "bounding_box": {
+            "ymin": 11.0,
+            "xmin": 19.0,
+            "ymax": 295.0,
+            "xmax": 158.0
+          }
+        },
+        {
+          "label": "person",
+          "confidence": 0.87109375,
+          "bounding_box": {
+            "ymin": 7.0,
+            "xmin": 148.0,
+            "ymax": 297.0,
+            "xmax": 248.0
+          }
+        },
+        {
+          "label": "bench",
+          "confidence": 0.55859375,
+          "bounding_box": {
+            "ymin": 156.0,
+            "xmin": 2.0,
+            "ymax": 295.0,
+            "xmax": 295.0
+          }
+        }
+      ]
+    },
+    "classification": {
+      "top_predictions": [
+        {
+          "label": "miniskirt, mini",
+          "confidence": 0.19140625
+        },
+        {
+          "label": "jean, blue jean, denim",
+          "confidence": 0.10546875
+        },
+        {
+          "label": "stole",
+          "confidence": 0.0703125
+        }
+      ]
+    },
+    "text": {
+      "text": "",
+      "words_found": 0
+    },
+    "faces": {
+      "count": 2,
+      "detected": [
+        {
+          "confidence": 0.99951171875,
+          "bounding_box": {
+            "xmin": 441,
+            "ymin": 130,
+            "xmax": 617,
+            "ymax": 315
+          }
+        },
+        {
+          "confidence": 0.99951171875,
+          "bounding_box": {
+            "xmin": 668,
+            "ymin": 86,
+            "xmax": 860,
+            "ymax": 310
+          }
+        }
+      ]
+    }
+  },
+  "summary": "This appears to be miniskirt, mini (19.1% confident). I can see: person, bench. 2 faces detected",
+  "annotated_image": "<base64 image data - 2369324 chars>",
+  "image_metadata": {
+    "original_info": {
+      "width": 1280,
+      "height": 850,
+      "estimated_tokens": 2880,
+      "within_budget": true,
+      "recommended_resize": false
+    },
+    "optimization": {
+      "status": "no_resize_needed"
+    }
+  }
+}

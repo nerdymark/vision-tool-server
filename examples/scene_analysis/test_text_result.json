@@ -1,0 +1,95 @@
+{
+  "success": true,
+  "image": "/home/mark/vision-tool-server/uploads/tmp9e5pnltb.png",
+  "analysis": {
+    "objects": {
+      "count": 1,
+      "detected": [
+        {
+          "label": "book",
+          "confidence": 0.5,
+          "bounding_box": {
+            "ymin": 4.0,
+            "xmin": 2.0,
+            "ymax": 295.0,
+            "xmax": 297.0
+          }
+        }
+      ]
+    },
+    "classification": {
+      "top_predictions": [
+        {
+          "label": "laptop, laptop computer",
+          "confidence": 0.578125
+        },
+        {
+          "label": "notebook, notebook computer",
+          "confidence": 0.07421875
+        },
+        {
+          "label": "hand-held computer, hand-held microcomputer",
+          "confidence": 0.06640625
+        }
+      ]
+    },
+    "text": {
+      "text": "The Martians h\n\n\u00a9 The Daily News\n\n      \n\n  \n\nve come at last\n\nLorem Ipsum is simply dummy\nintext of the Printing and typesetting\nindustry, Lorem Ipsum has been\nindustry's standard dummy",
+      "words_found": 30
+    },
+    "faces": {
+      "count": 0,
+      "detected": []
+    }
+  },
+  "summary": "This appears to be laptop, laptop computer (57.8% confident). I can see: book. Contains text (30 words): The Martians h\n\n\u00a9 The Daily News\n\n      \n\n  \n\nve come at last\n\nLorem Ipsum is simply dummy\nintext of...",
+  "annotated_image": "<base64 image data - 1046928 chars>",
+  "image_metadata": {
+    "original_info": {
+      "width": 1280,
+      "height": 1119,
+      "estimated_tokens": 4320,
+      "within_budget": false,
+      "recommended_resize": true
+    },
+    "optimization": {
+      "original_size": [
+        1280,
+        1119
+      ],
+      "original_tokens_estimated": 4320,
+      "resized": true,
+      "new_size": [
+        1152,
+        992
+      ],
+      "new_tokens_estimated": 2880,
+      "scale_factor": 0.9,
+      "token_reduction": "33.3%",
+      "output_path": "/home/mark/vision-tool-server/uploads/tmp9e5pnltb.png",
+      "attempt": 1,
+      "target_tokens": 3500,
+      "retry_history": [
+        {
+          "attempt": 1,
+          "target_tokens": 3500,
+          "original_size": [
+            1280,
+            1119
+          ],
+          "original_tokens_estimated": 4320,
+          "resized": true,
+          "message": null,
+          "new_size": [
+            1152,
+            992
+          ],
+          "new_tokens_estimated": 2880,
+          "scale_factor": 0.9,
+          "token_reduction": "33.3%",
+          "output_path": "/home/mark/vision-tool-server/uploads/tmp9e5pnltb.png"
+        }
+      ]
+    }
+  }
+}

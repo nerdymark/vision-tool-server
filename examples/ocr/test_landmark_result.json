@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "text": "",
+  "words_found": 0,
+  "details": [],
+  "annotated_image": null,
+  "image_metadata": {
+    "original_info": {
+      "width": 960,
+      "height": 1280,
+      "estimated_tokens": 2880,
+      "within_budget": true,
+      "recommended_resize": false
+    },
+    "optimization": {
+      "status": "no_resize_needed"
+    }
+  }
+}

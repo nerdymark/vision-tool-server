@@ -6,11 +6,17 @@ from .image_optimizer import (
     estimate_image_tokens,
     calculate_target_dimensions
 )
+from .image_annotator import (
+    annotate_detections,
+    annotate_scene
+)
 
 __all__ = [
     'resize_image_for_tokens',
     'resize_with_retry',
     'get_image_info',
     'estimate_image_tokens',
-    'calculate_target_dimensions'
+    'calculate_target_dimensions',
+    'annotate_detections',
+    'annotate_scene'
 ]

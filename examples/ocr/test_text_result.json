@@ -1,0 +1,716 @@
+{
+  "success": true,
+  "text": "The Martians h \u00a9 The Daily News ve come at last Lorem Ipsum is simply dummy intext of the Printing and typesetting industry, Lorem Ipsum has been industry's standard dummy",
+  "words_found": 30,
+  "details": [
+    {
+      "text": "The",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          102,
+          215
+        ],
+        "top_right": [
+          205,
+          215
+        ],
+        "bottom_right": [
+          205,
+          295
+        ],
+        "bottom_left": [
+          102,
+          295
+        ]
+      }
+    },
+    {
+      "text": "Martians",
+      "confidence": 0.92,
+      "bounding_box": {
+        "top_left": [
+          229,
+          247
+        ],
+        "top_right": [
+          477,
+          247
+        ],
+        "bottom_right": [
+          477,
+          318
+        ],
+        "bottom_left": [
+          229,
+          318
+        ]
+      }
+    },
+    {
+      "text": "h",
+      "confidence": 0.92,
+      "bounding_box": {
+        "top_left": [
+          502,
+          262
+        ],
+        "top_right": [
+          530,
+          262
+        ],
+        "bottom_right": [
+          530,
+          324
+        ],
+        "bottom_left": [
+          502,
+          324
+        ]
+      }
+    },
+    {
+      "text": "\u00a9",
+      "confidence": 0.93,
+      "bounding_box": {
+        "top_left": [
+          148,
+          54
+        ],
+        "top_right": [
+          258,
+          54
+        ],
+        "bottom_right": [
+          258,
+          169
+        ],
+        "bottom_left": [
+          148,
+          169
+        ]
+      }
+    },
+    {
+      "text": "The",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          332,
+          75
+        ],
+        "top_right": [
+          504,
+          75
+        ],
+        "bottom_right": [
+          504,
+          175
+        ],
+        "bottom_left": [
+          332,
+          175
+        ]
+      }
+    },
+    {
+      "text": "Daily",
+      "confidence": 0.87,
+      "bounding_box": {
+        "top_left": [
+          533,
+          90
+        ],
+        "top_right": [
+          794,
+          90
+        ],
+        "bottom_right": [
+          794,
+          249
+        ],
+        "bottom_left": [
+          533,
+          249
+        ]
+      }
+    },
+    {
+      "text": "News",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          806,
+          116
+        ],
+        "top_right": [
+          1049,
+          116
+        ],
+        "bottom_right": [
+          1049,
+          235
+        ],
+        "bottom_left": [
+          806,
+          235
+        ]
+      }
+    },
+    {
+      "text": "ve",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          568,
+          286
+        ],
+        "top_right": [
+          636,
+          286
+        ],
+        "bottom_right": [
+          636,
+          355
+        ],
+        "bottom_left": [
+          568,
+          355
+        ]
+      }
+    },
+    {
+      "text": "come",
+      "confidence": 0.95,
+      "bounding_box": {
+        "top_left": [
+          660,
+          297
+        ],
+        "top_right": [
+          812,
+          297
+        ],
+        "bottom_right": [
+          812,
+          356
+        ],
+        "bottom_left": [
+          660,
+          356
+        ]
+      }
+    },
+    {
+      "text": "at",
+      "confidence": 0.95,
+      "bounding_box": {
+        "top_left": [
+          835,
+          309
+        ],
+        "top_right": [
+          891,
+          309
+        ],
+        "bottom_right": [
+          891,
+          365
+        ],
+        "bottom_left": [
+          835,
+          365
+        ]
+      }
+    },
+    {
+      "text": "last",
+      "confidence": 0.92,
+      "bounding_box": {
+        "top_left": [
+          912,
+          309
+        ],
+        "top_right": [
+          1012,
+          309
+        ],
+        "bottom_right": [
+          1012,
+          379
+        ],
+        "bottom_left": [
+          912,
+          379
+        ]
+      }
+    },
+    {
+      "text": "Lorem",
+      "confidence": 0.95,
+      "bounding_box": {
+        "top_left": [
+          749,
+          371
+        ],
+        "top_right": [
+          803,
+          371
+        ],
+        "bottom_right": [
+          803,
+          391
+        ],
+        "bottom_left": [
+          749,
+          391
+        ]
+      }
+    },
+    {
+      "text": "Ipsum",
+      "confidence": 0.95,
+      "bounding_box": {
+        "top_left": [
+          811,
+          376
+        ],
+        "top_right": [
+          863,
+          376
+        ],
+        "bottom_right": [
+          863,
+          396
+        ],
+        "bottom_left": [
+          811,
+          396
+        ]
+      }
+    },
+    {
+      "text": "is",
+      "confidence": 0.97,
+      "bounding_box": {
+        "top_left": [
+          872,
+          381
+        ],
+        "top_right": [
+          884,
+          381
+        ],
+        "bottom_right": [
+          884,
+          398
+        ],
+        "bottom_left": [
+          872,
+          398
+        ]
+      }
+    },
+    {
+      "text": "simply",
+      "confidence": 0.95,
+      "bounding_box": {
+        "top_left": [
+          879,
+          379
+        ],
+        "top_right": [
+          950,
+          379
+        ],
+        "bottom_right": [
+          950,
+          411
+        ],
+        "bottom_left": [
+          879,
+          411
+        ]
+      }
+    },
+    {
+      "text": "dummy",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          956,
+          385
+        ],
+        "top_right": [
+          1021,
+          385
+        ],
+        "bottom_right": [
+          1021,
+          418
+        ],
+        "bottom_left": [
+          956,
+          418
+        ]
+      }
+    },
+    {
+      "text": "intext",
+      "confidence": 0.54,
+      "bounding_box": {
+        "top_left": [
+          737,
+          397
+        ],
+        "top_right": [
+          787,
+          397
+        ],
+        "bottom_right": [
+          787,
+          422
+        ],
+        "bottom_left": [
+          737,
+          422
+        ]
+      }
+    },
+    {
+      "text": "of",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          794,
+          401
+        ],
+        "top_right": [
+          811,
+          401
+        ],
+        "bottom_right": [
+          811,
+          417
+        ],
+        "bottom_left": [
+          794,
+          417
+        ]
+      }
+    },
+    {
+      "text": "the",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          816,
+          402
+        ],
+        "top_right": [
+          845,
+          402
+        ],
+        "bottom_right": [
+          845,
+          420
+        ],
+        "bottom_left": [
+          816,
+          420
+        ]
+      }
+    },
+    {
+      "text": "Printing",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          852,
+          407
+        ],
+        "top_right": [
+          920,
+          407
+        ],
+        "bottom_right": [
+          920,
+          431
+        ],
+        "bottom_left": [
+          852,
+          431
+        ]
+      }
+    },
+    {
+      "text": "and",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          928,
+          414
+        ],
+        "top_right": [
+          960,
+          414
+        ],
+        "bottom_right": [
+          960,
+          430
+        ],
+        "bottom_left": [
+          928,
+          430
+        ]
+      }
+    },
+    {
+      "text": "typesetting",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          957,
+          412
+        ],
+        "top_right": [
+          1068,
+          412
+        ],
+        "bottom_right": [
+          1068,
+          447
+        ],
+        "bottom_left": [
+          957,
+          447
+        ]
+      }
+    },
+    {
+      "text": "industry,",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          745,
+          417
+        ],
+        "top_right": [
+          818,
+          417
+        ],
+        "bottom_right": [
+          818,
+          451
+        ],
+        "bottom_left": [
+          745,
+          451
+        ]
+      }
+    },
+    {
+      "text": "Lorem",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          828,
+          429
+        ],
+        "top_right": [
+          882,
+          429
+        ],
+        "bottom_right": [
+          882,
+          449
+        ],
+        "bottom_left": [
+          828,
+          449
+        ]
+      }
+    },
+    {
+      "text": "Ipsum",
+      "confidence": 0.81,
+      "bounding_box": {
+        "top_left": [
+          890,
+          435
+        ],
+        "top_right": [
+          943,
+          435
+        ],
+        "bottom_right": [
+          943,
+          455
+        ],
+        "bottom_left": [
+          890,
+          455
+        ]
+      }
+    },
+    {
+      "text": "has",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          951,
+          439
+        ],
+        "top_right": [
+          981,
+          439
+        ],
+        "bottom_right": [
+          981,
+          458
+        ],
+        "bottom_left": [
+          951,
+          458
+        ]
+      }
+    },
+    {
+      "text": "been",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          988,
+          442
+        ],
+        "top_right": [
+          1031,
+          442
+        ],
+        "bottom_right": [
+          1031,
+          462
+        ],
+        "bottom_left": [
+          988,
+          462
+        ]
+      }
+    },
+    {
+      "text": "industry's",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          779,
+          446
+        ],
+        "top_right": [
+          865,
+          446
+        ],
+        "bottom_right": [
+          865,
+          480
+        ],
+        "bottom_left": [
+          779,
+          480
+        ]
+      }
+    },
+    {
+      "text": "standard",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          860,
+          456
+        ],
+        "top_right": [
+          951,
+          456
+        ],
+        "bottom_right": [
+          951,
+          486
+        ],
+        "bottom_left": [
+          860,
+          486
+        ]
+      }
+    },
+    {
+      "text": "dummy",
+      "confidence": 0.96,
+      "bounding_box": {
+        "top_left": [
+          958,
+          462
+        ],
+        "top_right": [
+          1023,
+          462
+        ],
+        "bottom_right": [
+          1023,
+          495
+        ],
+        "bottom_left": [
+          958,
+          495
+        ]
+      }
+    }
+  ],
+  "annotated_image": "<base64 image data - 1020884 chars>",
+  "image_metadata": {
+    "original_info": {
+      "width": 1280,
+      "height": 1119,
+      "estimated_tokens": 4320,
+      "within_budget": false,
+      "recommended_resize": true
+    },
+    "optimization": {
+      "original_size": [
+        1280,
+        1119
+      ],
+      "original_tokens_estimated": 4320,
+      "resized": true,
+      "new_size": [
+        1152,
+        992
+      ],
+      "new_tokens_estimated": 2880,
+      "scale_factor": 0.9,
+      "token_reduction": "33.3%",
+      "output_path": "/home/mark/vision-tool-server/uploads/tmpj707ywkc.png",
+      "attempt": 1,
+      "target_tokens": 3500,
+      "retry_history": [
+        {
+          "attempt": 1,
+          "target_tokens": 3500,
+          "original_size": [
+            1280,
+            1119
+          ],
+          "original_tokens_estimated": 4320,
+          "resized": true,
+          "message": null,
+          "new_size": [
+            1152,
+            992
+          ],
+          "new_tokens_estimated": 2880,
+          "scale_factor": 0.9,
+          "token_reduction": "33.3%",
+          "output_path": "/home/mark/vision-tool-server/uploads/tmpj707ywkc.png"
+        }
+      ]
+    }
+  }
+}

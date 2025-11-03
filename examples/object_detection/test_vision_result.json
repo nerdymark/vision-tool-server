@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "objects": [],
+  "count": 0,
+  "annotated_image": null,
+  "image_metadata": {
+    "original_info": {
+      "width": 640,
+      "height": 480,
+      "estimated_tokens": 800,
+      "within_budget": true,
+      "recommended_resize": false
+    },
+    "optimization": {
+      "status": "no_resize_needed"
+    }
+  }
+}

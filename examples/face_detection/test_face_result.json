@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "faces": [
+    {
+      "confidence": 0.99951171875,
+      "bounding_box": {
+        "xmin": 441,
+        "ymin": 130,
+        "xmax": 617,
+        "ymax": 315
+      }
+    },
+    {
+      "confidence": 0.99951171875,
+      "bounding_box": {
+        "xmin": 668,
+        "ymin": 86,
+        "xmax": 860,
+        "ymax": 310
+      }
+    }
+  ],
+  "count": 2,
+  "annotated_image": "<base64 image data - 2363844 chars>",
+  "image_metadata": {
+    "original_info": {
+      "width": 1280,
+      "height": 850,
+      "estimated_tokens": 2880,
+      "within_budget": true,
+      "recommended_resize": false
+    },
+    "optimization": {
+      "status": "no_resize_needed"
+    }
+  }
+}

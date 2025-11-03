@@ -16,7 +16,7 @@ import uvicorn
 from tools import object_detection, classification, ocr, face_detection, scene_analysis
 
 # Import image optimization utilities
-from utils import resize_with_retry, get_image_info
+from utils import resize_with_retry, get_image_info, annotate_detections, annotate_scene
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -170,10 +170,20 @@ async def detect_objects_endpoint(
             raise HTTPException(status_code=400, detail="No image provided")
 
         results = object_detection.detect_objects(str(img_path), threshold=threshold)
+
+        # Generate annotated image with object bounding boxes
+        annotated_image = None
+        if results:
+            try:
+                annotated_image = annotate_detections(str(img_path), results, "object")
+            except Exception as e:
+                print(f"Warning: Could not generate annotated image: {e}")
+
         return {
             "success": True,
             "objects": results,
             "count": len(results),
+            "annotated_image": annotated_image,
             "image_metadata": metadata
         }
     except Exception as e:
@@ -233,9 +243,19 @@ async def extract_text_endpoint(
 
         lang_list = languages.split(',')
         results = ocr.extract_text(str(img_path), languages=lang_list, detail=detail)
+
+        # Generate annotated image with text bounding boxes
+        annotated_image = None
+        if results and results.get('details'):
+            try:
+                annotated_image = annotate_detections(str(img_path), results['details'], "text")
+            except Exception as e:
+                print(f"Warning: Could not generate annotated image: {e}")
+
         return {
             "success": True,
             **results,
+            "annotated_image": annotated_image,
             "image_metadata": metadata
         }
     except Exception as e:
@@ -266,10 +286,19 @@ async def detect_faces_endpoint(
         if isinstance(results, dict) and "error" in results:
             return JSONResponse(status_code=500, content={"success": False, **results})
 
+        # Generate annotated image with face bounding boxes
+        annotated_image = None
+        if results:
+            try:
+                annotated_image = annotate_detections(str(img_path), results, "face")
+            except Exception as e:
+                print(f"Warning: Could not generate annotated image: {e}")
+
         return {
             "success": True,
             "faces": results,
             "count": len(results),
+            "annotated_image": annotated_image,
             "image_metadata": metadata
         }
     except Exception as e:
@@ -303,9 +332,24 @@ async def analyze_scene_endpoint(
             include_text=include_text,
             include_faces=include_faces
         )
+
+        # Generate annotated image with all detections
+        annotated_image = None
+        try:
+            analysis = results.get('analysis', {})
+            annotated_image = annotate_scene(
+                str(img_path),
+                objects=analysis.get('objects', {}).get('detected'),
+                faces=analysis.get('faces', {}).get('detected'),
+                text_regions=analysis.get('text', {}).get('details') if include_text else None
+            )
+        except Exception as e:
+            print(f"Warning: Could not generate annotated image: {e}")
+
         return {
             "success": True,
             **results,
+            "annotated_image": annotated_image,
             "image_metadata": metadata
         }
     except Exception as e:

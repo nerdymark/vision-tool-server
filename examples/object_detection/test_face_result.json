@@ -1,0 +1,49 @@
+{
+  "success": true,
+  "objects": [
+    {
+      "label": "person",
+      "confidence": 0.87109375,
+      "bounding_box": {
+        "ymin": 11.0,
+        "xmin": 19.0,
+        "ymax": 295.0,
+        "xmax": 158.0
+      }
+    },
+    {
+      "label": "person",
+      "confidence": 0.87109375,
+      "bounding_box": {
+        "ymin": 7.0,
+        "xmin": 148.0,
+        "ymax": 297.0,
+        "xmax": 248.0
+      }
+    },
+    {
+      "label": "bench",
+      "confidence": 0.55859375,
+      "bounding_box": {
+        "ymin": 156.0,
+        "xmin": 2.0,
+        "ymax": 295.0,
+        "xmax": 295.0
+      }
+    }
+  ],
+  "count": 3,
+  "annotated_image": "<base64 image data - 2382552 chars>",
+  "image_metadata": {
+    "original_info": {
+      "width": 1280,
+      "height": 850,
+      "estimated_tokens": 2880,
+      "within_budget": true,
+      "recommended_resize": false
+    },
+    "optimization": {
+      "status": "no_resize_needed"
+    }
+  }
+}

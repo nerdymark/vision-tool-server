@@ -1,0 +1,54 @@
+{
+  "success": true,
+  "faces": [],
+  "count": 0,
+  "annotated_image": null,
+  "image_metadata": {
+    "original_info": {
+      "width": 1280,
+      "height": 1119,
+      "estimated_tokens": 4320,
+      "within_budget": false,
+      "recommended_resize": true
+    },
+    "optimization": {
+      "original_size": [
+        1280,
+        1119
+      ],
+      "original_tokens_estimated": 4320,
+      "resized": true,
+      "new_size": [
+        1152,
+        992
+      ],
+      "new_tokens_estimated": 2880,
+      "scale_factor": 0.9,
+      "token_reduction": "33.3%",
+      "output_path": "/home/mark/vision-tool-server/uploads/tmpth738ql6.png",
+      "attempt": 1,
+      "target_tokens": 3500,
+      "retry_history": [
+        {
+          "attempt": 1,
+          "target_tokens": 3500,
+          "original_size": [
+            1280,
+            1119
+          ],
+          "original_tokens_estimated": 4320,
+          "resized": true,
+          "message": null,
+          "new_size": [
+            1152,
+            992
+          ],
+          "new_tokens_estimated": 2880,
+          "scale_factor": 0.9,
+          "token_reduction": "33.3%",
+          "output_path": "/home/mark/vision-tool-server/uploads/tmpth738ql6.png"
+        }
+      ]
+    }
+  }
+}

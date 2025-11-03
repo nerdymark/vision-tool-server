@@ -1,0 +1,48 @@
+{
+  "success": true,
+  "image": "/home/mark/vision-tool-server/uploads/test_vision.jpg",
+  "analysis": {
+    "objects": {
+      "count": 0,
+      "detected": []
+    },
+    "classification": {
+      "top_predictions": [
+        {
+          "label": "analog clock",
+          "confidence": 0.34765625
+        },
+        {
+          "label": "digital clock",
+          "confidence": 0.31640625
+        },
+        {
+          "label": "wall clock",
+          "confidence": 0.26171875
+        }
+      ]
+    },
+    "text": {
+      "text": "",
+      "words_found": 0
+    },
+    "faces": {
+      "count": 0,
+      "detected": []
+    }
+  },
+  "summary": "This appears to be analog clock (34.8% confident)",
+  "annotated_image": "<base64 image data - 50044 chars>",
+  "image_metadata": {
+    "original_info": {
+      "width": 640,
+      "height": 480,
+      "estimated_tokens": 800,
+      "within_budget": true,
+      "recommended_resize": false
+    },
+    "optimization": {
+      "status": "no_resize_needed"
+    }
+  }
+}

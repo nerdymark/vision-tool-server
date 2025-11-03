@@ -47,3 +47,5 @@ htmlcov/
 # Local configuration
 config.local.yml
 secrets.yml
+venv.old/
+uploads/

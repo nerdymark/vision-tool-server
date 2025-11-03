@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "predictions": [
+    {
+      "label": "analog clock",
+      "confidence": 0.34765625
+    },
+    {
+      "label": "digital clock",
+      "confidence": 0.31640625
+    },
+    {
+      "label": "wall clock",
+      "confidence": 0.26171875
+    },
+    {
+      "label": "digital watch",
+      "confidence": 0.0078125
+    },
+    {
+      "label": "envelope",
+      "confidence": 0.0078125
+    }
+  ],
+  "image_metadata": {
+    "original_info": {
+      "width": 640,
+      "height": 480,
+      "estimated_tokens": 800,
+      "within_budget": true,
+      "recommended_resize": false
+    },
+    "optimization": {
+      "status": "no_resize_needed"
+    }
+  }
+}

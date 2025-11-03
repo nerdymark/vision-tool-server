@@ -1,0 +1,48 @@
+{
+  "success": true,
+  "image": "/home/mark/vision-tool-server/uploads/test_landmark.jpg",
+  "analysis": {
+    "objects": {
+      "count": 0,
+      "detected": []
+    },
+    "classification": {
+      "top_predictions": [
+        {
+          "label": "pedestal, plinth, footstall",
+          "confidence": 0.9921875
+        },
+        {
+          "label": "fountain",
+          "confidence": 0.00390625
+        },
+        {
+          "label": "hare",
+          "confidence": 0.0
+        }
+      ]
+    },
+    "text": {
+      "text": "",
+      "words_found": 0
+    },
+    "faces": {
+      "count": 0,
+      "detected": []
+    }
+  },
+  "summary": "This appears to be pedestal, plinth, footstall (99.2% confident)",
+  "annotated_image": "<base64 image data - 1926272 chars>",
+  "image_metadata": {
+    "original_info": {
+      "width": 960,
+      "height": 1280,
+      "estimated_tokens": 2880,
+      "within_budget": true,
+      "recommended_resize": false
+    },
+    "optimization": {
+      "status": "no_resize_needed"
+    }
+  }
+}

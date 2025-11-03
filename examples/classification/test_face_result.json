@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "predictions": [
+    {
+      "label": "miniskirt, mini",
+      "confidence": 0.19140625
+    },
+    {
+      "label": "jean, blue jean, denim",
+      "confidence": 0.10546875
+    },
+    {
+      "label": "stole",
+      "confidence": 0.0703125
+    },
+    {
+      "label": "groom, bridegroom",
+      "confidence": 0.05859375
+    },
+    {
+      "label": "notebook, notebook computer",
+      "confidence": 0.04296875
+    }
+  ],
+  "image_metadata": {
+    "original_info": {
+      "width": 1280,
+      "height": 850,
+      "estimated_tokens": 2880,
+      "within_budget": true,
+      "recommended_resize": false
+    },
+    "optimization": {
+      "status": "no_resize_needed"
+    }
+  }
+}
