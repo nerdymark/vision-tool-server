@@ -1,0 +1,15 @@
+[Unit]
+Description=Vision Tool Server - AI Vision Tools for OpenWebUI
+After=network.target
+
+[Service]
+Type=simple
+User=mark
+WorkingDirectory=/home/mark/vision-tool-server
+ExecStart=/home/mark/vision-tool-server/venv/bin/python /home/mark/vision-tool-server/server.py
+Restart=always
+RestartSec=10
+Environment="PATH=/home/mark/vision-tool-server/venv/bin:/usr/local/bin:/usr/bin:/bin"
+
+[Install]
+WantedBy=multi-user.target

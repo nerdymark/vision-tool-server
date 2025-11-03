@@ -1,0 +1,30 @@
+# FastAPI and web server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+pydantic==2.5.3
+
+# Image processing
+opencv-python==4.5.5.64
+Pillow==10.2.0
+numpy<1.20,>=1.16.6  # Constrained by OpenVINO 2022.1.0
+
+# Google Coral - requires Python 3.9
+# Install pre-built wheels manually (see SETUP_GUIDE.md)
+# pycoral==2.0.0 (pre-built wheel)
+# tflite-runtime==2.5.0.post1 (pre-built wheel)
+
+# Intel OpenVINO (2022.1.0 - last version with MYRIAD/NCS2 support)
+# NOTE: MYRIAD plugin must be built from source (see CLAUDE.md)
+# Plugin location: venv/lib/python3.9/site-packages/openvino/libs/libopenvino_intel_myriad_plugin.so
+openvino==2022.1.0
+openvino-dev==2022.1.0
+
+# OCR
+easyocr==1.7.1
+pytesseract==0.3.10
+
+# Utilities
+aiofiles==23.2.1
+python-jose==3.3.0
+requests==2.31.0

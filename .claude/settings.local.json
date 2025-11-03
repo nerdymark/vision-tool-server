@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(sudo apt-key add:*)",
+      "Bash(PYTHON=/home/mark/vision-tool-server/venv/bin/python make:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
