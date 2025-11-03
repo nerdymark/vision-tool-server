@@ -45,6 +45,12 @@ Provides local AI-powered vision analysis tools for OpenWebUI using hardware acc
 - **Exponential Backoff Retry** - Progressive token targets (3500, 2800, 2000 tokens)
 - **MYRIAD Plugin Support** - Custom-built OpenVINO 2022.1.0 plugin for NCS2 hardware acceleration
 
+### New Features (November 3, 2025)
+- **OpenWebUI Python Tool Integration** - Native Python tool that wraps the vision API
+- **File Handler Support** - Receives image file paths directly from OpenWebUI
+- **CORS Support** - Cross-origin requests enabled for browser-based access
+- **JSON API Endpoints** - All endpoints support JSON with base64 image data
+
 ---
 
 ## Architecture
@@ -66,31 +72,33 @@ Provides local AI-powered vision analysis tools for OpenWebUI using hardware acc
 ### Directory Structure
 ```
 /home/mark/vision-tool-server/
-├── server.py                    # Main FastAPI application
-├── utils/                       # Utility modules
+├── server.py                           # Main FastAPI application (with CORS)
+├── openwebui_vision_tool.py            # OpenWebUI Python tool (NEW)
+├── OPENWEBUI_TOOL_INSTALLATION.md      # Tool installation guide (NEW)
+├── utils/                              # Utility modules
 │   ├── __init__.py
-│   └── image_optimizer.py       # Image token estimation and resizing
-├── tools/                       # Vision tool modules
+│   └── image_optimizer.py              # Image token estimation and resizing
+├── tools/                              # Vision tool modules
 │   ├── __init__.py
-│   ├── object_detection.py      # Coral - SSD MobileNet v2
-│   ├── classification.py        # Coral - MobileNet v2
-│   ├── ocr.py                   # EasyOCR/Tesseract
-│   ├── face_detection.py        # Intel NCS2
-│   └── scene_analysis.py        # Orchestration layer
-├── models/                      # Model storage
-│   ├── coral/                   # Coral TFLite models
-│   └── intel/                   # OpenVINO IR models
-├── venv/                        # Python 3.9 virtual environment
+│   ├── object_detection.py             # Coral - SSD MobileNet v2
+│   ├── classification.py               # Coral - MobileNet v2
+│   ├── ocr.py                          # EasyOCR/Tesseract
+│   ├── face_detection.py               # Intel NCS2
+│   └── scene_analysis.py               # Orchestration layer
+├── models/                             # Model storage
+│   ├── coral/                          # Coral TFLite models
+│   └── intel/                          # OpenVINO IR models
+├── venv/                               # Python 3.9 virtual environment
 │   └── lib/python3.9/site-packages/openvino/libs/
 │       └── libopenvino_intel_myriad_plugin.so  # Custom-built MYRIAD plugin
-├── uploads/                     # Temporary file storage
-├── tests/                       # Test suite
-├── requirements.txt             # Python dependencies
-├── start_server.sh              # Startup script
-├── vision-tool-server.service   # Systemd service definition
-├── download_models.py           # Model downloader
-├── install_dependencies.sh      # System setup script
-└── test_image_optimization.py   # Image optimization testing
+├── uploads/                            # Temporary file storage
+├── tests/                              # Test suite
+├── requirements.txt                    # Python dependencies
+├── start_server.sh                     # Startup script
+├── vision-tool-server.service          # Systemd service definition
+├── download_models.py                  # Model downloader
+├── install_dependencies.sh             # System setup script
+└── test_image_optimization.py          # Image optimization testing
 ```
 
 ---
@@ -594,13 +602,46 @@ Environment="VISION_HOST=0.0.0.0"
 
 ## Integration with OpenWebUI
 
+### Two Integration Methods
+
+**Method 1: Python Tool (Recommended ✅)**
+- Install `openwebui_vision_tool.py` as a native Python tool
+- Receives image file paths directly from OpenWebUI
+- Works with all models that support function calling
+- See `OPENWEBUI_TOOL_INSTALLATION.md` for complete guide
+
+**Method 2: External OpenAPI Server (Limited)**
+- Register vision server as external tool via `http://10.0.1.23:8000/openapi.json`
+- **Limitation:** OpenWebUI doesn't pass images to external OpenAPI tools (as of Nov 2025)
+- Useful for direct API access, but not for chat-based image analysis
+
+### Recommended Setup: Python Tool
+
+**Installation:**
+1. Copy contents of `openwebui_vision_tool.py`
+2. In OpenWebUI: Admin Panel → Tools → Create New Tool
+3. Paste code and save
+4. Enable tools in chat settings
+
+**Architecture:**
+```
+┌─────────────────┐      ┌──────────────────┐      ┌─────────────────┐
+│  OpenWebUI      │      │  Python Tool     │      │  Vision Server  │
+│  (Chat)         │─────►│  (file_handler)  │─────►│  :8000          │
+│  Uploads Image  │      │  Reads & Base64  │      │  Coral + NCS2   │
+└─────────────────┘      └──────────────────┘      └─────────────────┘
+         │                        │                          │
+    File saved              File path                  Base64 image
+    to disk                 passed                     sent via JSON
+```
+
 ### Docker Network Architecture
 
 ```
 ┌─────────────────┐         ┌──────────────────┐
 │  OpenWebUI      │         │  Vision Server   │
 │  Container      │◄───────►│  (Host)          │
-│  172.17.0.x     │  Bridge │  172.17.0.1      │
+│  172.17.0.x     │  Bridge │  10.0.1.23:8000  │
 └─────────────────┘         └──────────────────┘
          │                           │
          │                           │
@@ -616,27 +657,39 @@ Environment="VISION_HOST=0.0.0.0"
 **Key Points:**
 - OpenWebUI runs in Docker container on bridge network
 - Vision server runs on host (not containerized - needs USB access)
-- Container accesses host via bridge gateway: `172.17.0.1`
-- DO NOT use host LAN IP (10.0.1.x) from container
-
-### OpenWebUI Configuration
-
-1. **Admin Panel → Settings → Tools**
-2. **Add Tool Server:** `http://172.17.0.1:8000/openapi.json`
-3. **Verify:** Tools appear in chat interface when uploading images
+- Python tool calls server at `http://10.0.1.23:8000` (LAN IP)
+- CORS enabled for cross-origin requests
 
 ### Usage Examples
 
+**Example 1: Object Detection**
+
 **User:** [uploads image of dog]
-**Prompt:** "What's in this image?"
+**User:** "What objects are in this image?"
 
 **Behind the scenes:**
-1. OpenWebUI sends image to Ollama with system prompt
-2. LLM decides to call vision tools
-3. OpenWebUI proxies request to `http://172.17.0.1:8000/analyze_scene`
-4. Vision server processes with Coral/NCS2
-5. Results returned to LLM
-6. LLM formats natural language response
+1. OpenWebUI saves image to disk
+2. Python tool receives file path via `__files__` parameter
+3. Tool reads image, converts to base64
+4. Calls `http://10.0.1.23:8000/detect_objects` with base64 data
+5. Vision server processes with Google Coral TPU
+6. Results returned to tool → formatted → sent to LLM
+7. LLM incorporates results in natural language response
+
+**Example 2: Scene Analysis**
+
+**User:** [uploads screenshot with text]
+**User:** "Analyze this image completely"
+
+**Behind the scenes:**
+1. LLM calls `analyze_scene` tool
+2. Tool processes image through all vision APIs:
+   - Object detection (Coral)
+   - Classification (Coral)
+   - OCR text extraction (CPU)
+   - Face detection (NCS2)
+3. Combined results returned to LLM
+4. LLM synthesizes comprehensive description
 
 ---
 
@@ -742,6 +795,33 @@ def cleanup_uploads():
 
 ---
 
-**Last Updated:** November 2, 2025
+**Last Updated:** November 3, 2025
 **Maintained By:** Claude (AI Assistant)
 **Contact:** User `mark` on system `ml-compute02`
+
+---
+
+## Changelog
+
+### November 3, 2025
+- ✅ Created OpenWebUI Python tool wrapper (`openwebui_vision_tool.py`)
+- ✅ Added CORS support to FastAPI server
+- ✅ Converted all endpoints to support JSON with base64 images
+- ✅ Added comprehensive installation guide (`OPENWEBUI_TOOL_INSTALLATION.md`)
+- ✅ Discovered limitation: External OpenAPI tools don't receive images from OpenWebUI
+- ✅ Solution: Use Python tool with `file_handler = True` instead
+
+### November 2, 2025
+- ✅ Implemented image token optimization system
+- ✅ Built custom OpenVINO 2022.1.0 MYRIAD plugin for NCS2
+- ✅ Added automatic image resizing with exponential backoff
+- ✅ Fixed RecursionError in retry metadata
+
+### November 1, 2025
+- ✅ Initial project setup
+- ✅ Installed Python 3.9 environment
+- ✅ Configured Google Coral TPU support
+- ✅ Configured Intel NCS2 support
+- ✅ Created FastAPI server with all vision endpoints
+- ✅ Set up systemd service
+- ✅ Downloaded and configured vision models

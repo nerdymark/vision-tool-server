@@ -7,9 +7,10 @@ import base64
 import tempfile
 from pathlib import Path
 from typing import Optional, List
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Body
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import uvicorn
 
 # Import our vision tools
@@ -25,37 +26,46 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Add CORS middleware to allow OpenWebUI to access the API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins (OpenWebUI on any port/host)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
 UPLOAD_DIR = Path(__file__).parent / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)
 
 
 # Request/Response models
 class DetectObjectsRequest(BaseModel):
-    image_path: Optional[str] = None
-    image_base64: Optional[str] = None
-    threshold: float = 0.4
+    image_path: Optional[str] = Field(None, description="Path to image file on server")
+    image_base64: Optional[str] = Field(None, description="Base64 encoded image data")
+    threshold: float = Field(0.4, description="Confidence threshold (0.0-1.0)")
 
 class ClassifyImageRequest(BaseModel):
-    image_path: Optional[str] = None
-    image_base64: Optional[str] = None
-    top_k: int = 5
+    image_path: Optional[str] = Field(None, description="Path to image file on server")
+    image_base64: Optional[str] = Field(None, description="Base64 encoded image data")
+    top_k: int = Field(5, description="Number of top predictions to return")
 
 class ExtractTextRequest(BaseModel):
-    image_path: Optional[str] = None
-    image_base64: Optional[str] = None
-    languages: List[str] = ['en']
-    detail: bool = True
+    image_path: Optional[str] = Field(None, description="Path to image file on server")
+    image_base64: Optional[str] = Field(None, description="Base64 encoded image data")
+    languages: str = Field('en', description="Comma-separated language codes (e.g., 'en,es,fr')")
+    detail: bool = Field(True, description="Include bounding boxes and confidence scores")
 
 class DetectFacesRequest(BaseModel):
-    image_path: Optional[str] = None
-    image_base64: Optional[str] = None
-    threshold: float = 0.5
+    image_path: Optional[str] = Field(None, description="Path to image file on server")
+    image_base64: Optional[str] = Field(None, description="Base64 encoded image data")
+    threshold: float = Field(0.5, description="Confidence threshold (0.0-1.0)")
 
 class AnalyzeSceneRequest(BaseModel):
-    image_path: Optional[str] = None
-    image_base64: Optional[str] = None
-    include_text: bool = True
-    include_faces: bool = True
+    image_path: Optional[str] = Field(None, description="Path to image file on server")
+    image_base64: Optional[str] = Field(None, description="Base64 encoded image data")
+    include_text: bool = Field(True, description="Include OCR text extraction")
+    include_faces: bool = Field(True, description="Include face detection")
 
 
 def save_image(file: UploadFile = None, base64_data: str = None,
@@ -78,10 +88,29 @@ def save_image(file: UploadFile = None, base64_data: str = None,
         with open(filepath, 'wb') as f:
             f.write(file.file.read())
     elif base64_data:
+        # Check for OpenWebUI placeholder tokens like [img-0]
+        if base64_data.startswith('[img-') and base64_data.endswith(']'):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Image placeholder '{base64_data}' detected. OpenWebUI may not be sending actual image data to tools. This is a known limitation - images might not be passed to external tools yet."
+            )
+
         # Decode base64
         if ',' in base64_data:
             base64_data = base64_data.split(',')[1]
-        image_data = base64.b64decode(base64_data)
+
+        try:
+            image_data = base64.b64decode(base64_data)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Invalid base64 data: {str(e)}")
+
+        # Verify we got actual image data
+        if len(image_data) < 100:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Image data too small ({len(image_data)} bytes). Possible placeholder or invalid data."
+            )
+
         # Save to temp file
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.jpg', dir=UPLOAD_DIR)
         temp_file.write(image_data)
@@ -149,27 +178,26 @@ async def health():
     }
 
 
-@app.post("/detect_objects")
+@app.post("/detect_objects", summary="Detect objects in image")
 async def detect_objects_endpoint(
-    file: Optional[UploadFile] = File(None),
-    image_path: Optional[str] = Form(None),
-    threshold: float = Form(0.4)
+    request: DetectObjectsRequest = Body(...)
 ):
     """
-    Detect objects in an image using Google Coral
+    Detect objects in an image using Google Coral TPU.
 
-    Returns list of detected objects with bounding boxes and confidence scores
+    Provide either image_base64 (base64 encoded image) or image_path (server file path).
+    Returns list of detected objects with bounding boxes, labels, and confidence scores.
     """
     try:
-        if file:
-            img_path, metadata = save_image(file=file)
-        elif image_path:
-            img_path = Path(image_path)
+        if request.image_base64:
+            img_path, metadata = save_image(base64_data=request.image_base64)
+        elif request.image_path:
+            img_path = Path(request.image_path)
             metadata = {}
         else:
-            raise HTTPException(status_code=400, detail="No image provided")
+            raise HTTPException(status_code=400, detail="Either image_base64 or image_path must be provided")
 
-        results = object_detection.detect_objects(str(img_path), threshold=threshold)
+        results = object_detection.detect_objects(str(img_path), threshold=request.threshold)
 
         # Generate annotated image with object bounding boxes
         annotated_image = None
@@ -190,27 +218,26 @@ async def detect_objects_endpoint(
         return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
 
 
-@app.post("/classify_image")
+@app.post("/classify_image", summary="Classify image")
 async def classify_image_endpoint(
-    file: Optional[UploadFile] = File(None),
-    image_path: Optional[str] = Form(None),
-    top_k: int = Form(5)
+    request: ClassifyImageRequest = Body(...)
 ):
     """
-    Classify an image using Google Coral
+    Classify an image using Google Coral TPU.
 
-    Returns top K predictions with labels and confidence scores
+    Provide either image_base64 (base64 encoded image) or image_path (server file path).
+    Returns top K classification predictions with labels and confidence scores.
     """
     try:
-        if file:
-            img_path, metadata = save_image(file=file)
-        elif image_path:
-            img_path = Path(image_path)
+        if request.image_base64:
+            img_path, metadata = save_image(base64_data=request.image_base64)
+        elif request.image_path:
+            img_path = Path(request.image_path)
             metadata = {}
         else:
-            raise HTTPException(status_code=400, detail="No image provided")
+            raise HTTPException(status_code=400, detail="Either image_base64 or image_path must be provided")
 
-        results = classification.classify_image(str(img_path), top_k=top_k)
+        results = classification.classify_image(str(img_path), top_k=request.top_k)
         return {
             "success": True,
             "predictions": results,
@@ -220,29 +247,28 @@ async def classify_image_endpoint(
         return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
 
 
-@app.post("/extract_text")
+@app.post("/extract_text", summary="Extract text from image (OCR)")
 async def extract_text_endpoint(
-    file: Optional[UploadFile] = File(None),
-    image_path: Optional[str] = Form(None),
-    languages: str = Form("en"),
-    detail: bool = Form(True)
+    request: ExtractTextRequest = Body(...)
 ):
     """
-    Extract text from an image using OCR
+    Extract text from an image using OCR (Optical Character Recognition).
 
-    Returns extracted text with optional bounding boxes and confidence scores
+    Provide either image_base64 (base64 encoded image) or image_path (server file path).
+    Returns extracted text with optional bounding boxes and confidence scores.
+    Supports multiple languages (comma-separated language codes).
     """
     try:
-        if file:
-            img_path, metadata = save_image(file=file)
-        elif image_path:
-            img_path = Path(image_path)
+        if request.image_base64:
+            img_path, metadata = save_image(base64_data=request.image_base64)
+        elif request.image_path:
+            img_path = Path(request.image_path)
             metadata = {}
         else:
-            raise HTTPException(status_code=400, detail="No image provided")
+            raise HTTPException(status_code=400, detail="Either image_base64 or image_path must be provided")
 
-        lang_list = languages.split(',')
-        results = ocr.extract_text(str(img_path), languages=lang_list, detail=detail)
+        lang_list = request.languages.split(',')
+        results = ocr.extract_text(str(img_path), languages=lang_list, detail=request.detail)
 
         # Generate annotated image with text bounding boxes
         annotated_image = None
@@ -262,27 +288,26 @@ async def extract_text_endpoint(
         return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
 
 
-@app.post("/detect_faces")
+@app.post("/detect_faces", summary="Detect faces in image")
 async def detect_faces_endpoint(
-    file: Optional[UploadFile] = File(None),
-    image_path: Optional[str] = Form(None),
-    threshold: float = Form(0.5)
+    request: DetectFacesRequest = Body(...)
 ):
     """
-    Detect faces in an image using Intel NCS2
+    Detect faces in an image using Intel NCS2 (Neural Compute Stick 2).
 
-    Returns list of detected faces with bounding boxes and confidence scores
+    Provide either image_base64 (base64 encoded image) or image_path (server file path).
+    Returns list of detected faces with bounding boxes and confidence scores.
     """
     try:
-        if file:
-            img_path, metadata = save_image(file=file)
-        elif image_path:
-            img_path = Path(image_path)
+        if request.image_base64:
+            img_path, metadata = save_image(base64_data=request.image_base64)
+        elif request.image_path:
+            img_path = Path(request.image_path)
             metadata = {}
         else:
-            raise HTTPException(status_code=400, detail="No image provided")
+            raise HTTPException(status_code=400, detail="Either image_base64 or image_path must be provided")
 
-        results = face_detection.detect_faces(str(img_path), threshold=threshold)
+        results = face_detection.detect_faces(str(img_path), threshold=request.threshold)
         if isinstance(results, dict) and "error" in results:
             return JSONResponse(status_code=500, content={"success": False, **results})
 
@@ -305,32 +330,30 @@ async def detect_faces_endpoint(
         return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
 
 
-@app.post("/analyze_scene")
+@app.post("/analyze_scene", summary="Comprehensive scene analysis")
 async def analyze_scene_endpoint(
-    file: Optional[UploadFile] = File(None),
-    image_path: Optional[str] = Form(None),
-    include_text: bool = Form(True),
-    include_faces: bool = Form(True)
+    request: AnalyzeSceneRequest = Body(...)
 ):
     """
-    Perform comprehensive scene analysis on an image
+    Perform comprehensive scene analysis on an image.
 
-    Combines object detection, classification, OCR, and face detection
-    Returns detailed analysis and human-readable summary
+    Provide either image_base64 (base64 encoded image) or image_path (server file path).
+    Combines object detection, image classification, OCR text extraction, and face detection.
+    Returns detailed analysis with human-readable summary.
     """
     try:
-        if file:
-            img_path, metadata = save_image(file=file)
-        elif image_path:
-            img_path = Path(image_path)
+        if request.image_base64:
+            img_path, metadata = save_image(base64_data=request.image_base64)
+        elif request.image_path:
+            img_path = Path(request.image_path)
             metadata = {}
         else:
-            raise HTTPException(status_code=400, detail="No image provided")
+            raise HTTPException(status_code=400, detail="Either image_base64 or image_path must be provided")
 
         results = scene_analysis.analyze_scene(
             str(img_path),
-            include_text=include_text,
-            include_faces=include_faces
+            include_text=request.include_text,
+            include_faces=request.include_faces
         )
 
         # Generate annotated image with all detections
@@ -341,7 +364,7 @@ async def analyze_scene_endpoint(
                 str(img_path),
                 objects=analysis.get('objects', {}).get('detected'),
                 faces=analysis.get('faces', {}).get('detected'),
-                text_regions=analysis.get('text', {}).get('details') if include_text else None
+                text_regions=analysis.get('text', {}).get('details') if request.include_text else None
             )
         except Exception as e:
             print(f"Warning: Could not generate annotated image: {e}")
