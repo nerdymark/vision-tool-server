@@ -28,6 +28,7 @@ class Tools:
 
     def __init__(self):
         self.valves = self.Valves()
+        self.file_handler = True  # Tell OpenWebUI to pass files via __files__
 
     def _get_file_path(self, __files__: Optional[List[Any]]) -> Optional[str]:
         """Extract file path from OpenWebUI __files__ parameter"""
