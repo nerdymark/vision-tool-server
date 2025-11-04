@@ -284,6 +284,46 @@ class Tools:
 
         return response
 
+    def test_file_upload(
+        self,
+        __user__: Optional[Dict] = None,
+        __files__: Optional[List[Any]] = None,
+        __event_emitter__=None,
+    ) -> str:
+        """
+        Test function to debug file upload issues.
+
+        This tool will tell you exactly what it receives from OpenWebUI.
+        Call this first to diagnose file upload problems.
+
+        :param __files__: Files from OpenWebUI
+        :return: Debug information
+        """
+        import sys
+
+        debug_info = []
+        debug_info.append(f"Python version: {sys.version}")
+        debug_info.append(f"file_handler flag: {getattr(self, 'file_handler', 'NOT SET')}")
+        debug_info.append(f"\n__files__ type: {type(__files__)}")
+        debug_info.append(f"__files__ value: {__files__}")
+
+        if __files__:
+            debug_info.append(f"__files__ length: {len(__files__)}")
+            if len(__files__) > 0:
+                debug_info.append(f"First item type: {type(__files__[0])}")
+                debug_info.append(f"First item value: {__files__[0]}")
+                if isinstance(__files__[0], dict):
+                    debug_info.append(f"First item keys: {list(__files__[0].keys())}")
+
+        debug_info.append(f"\n__user__ type: {type(__user__)}")
+        debug_info.append(f"__user__ keys: {list(__user__.keys()) if __user__ else 'None'}")
+
+        # Try to extract file path
+        file_path = self._get_file_path(__files__)
+        debug_info.append(f"\nExtracted file_path: {file_path}")
+
+        return "=== FILE UPLOAD DEBUG INFO ===\n\n" + "\n".join(debug_info)
+
     def analyze_scene(
         self,
         __user__: Optional[Dict] = None,
