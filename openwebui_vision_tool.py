@@ -349,19 +349,36 @@ class Tools:
         file_path = self._get_file_path(__files__)
 
         if not file_path:
-            # Enhanced debug info
-            files_debug = f"Files received: {type(__files__)}"
-            if __files__:
-                files_debug += f", count: {len(__files__)}"
-                if len(__files__) > 0:
-                    files_debug += f", first item: {type(__files__[0])}"
-                    if isinstance(__files__[0], dict):
-                        files_debug += f", keys: {list(__files__[0].keys())}"
-                        files_debug += f", values sample: {str(__files__[0])[:200]}"
-            else:
-                files_debug += " (None or empty)"
+            # DETAILED DEBUG INFO
+            import sys
+            debug_lines = []
+            debug_lines.append("=== DIAGNOSTIC INFO ===\n")
+            debug_lines.append(f"Python: {sys.version.split()[0]}")
+            debug_lines.append(f"file_handler: {getattr(self, 'file_handler', 'NOT SET')}")
+            debug_lines.append(f"\n__files__ received:")
+            debug_lines.append(f"  Type: {type(__files__)}")
+            debug_lines.append(f"  Value: {repr(__files__)}")
 
-            return f"Error: No image file path found.\n\nDebug info: {files_debug}\n\nPlease ensure you've uploaded an image before calling this tool."
+            if __files__:
+                debug_lines.append(f"  Length: {len(__files__)}")
+                if len(__files__) > 0:
+                    debug_lines.append(f"  First item type: {type(__files__[0])}")
+                    debug_lines.append(f"  First item: {repr(__files__[0])[:500]}")
+                    if isinstance(__files__[0], dict):
+                        debug_lines.append(f"  Keys: {list(__files__[0].keys())}")
+
+            if __user__:
+                debug_lines.append(f"\n__user__ keys: {list(__user__.keys())}")
+
+            debug_lines.append(f"\nExtracted path: {file_path}")
+            debug_lines.append("\n" + "="*40)
+            debug_lines.append("\nTROUBLESHOOTING:")
+            debug_lines.append("1. Make sure image is uploaded BEFORE sending message")
+            debug_lines.append("2. Image should be visible in chat")
+            debug_lines.append("3. Check if file_handler = True")
+            debug_lines.append("4. Try a different model (llama3.1, GPT-4)")
+
+            return "\n".join(debug_lines)
 
         # Call vision API
         result = self._call_vision_api(
