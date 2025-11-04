@@ -1,12 +1,13 @@
 """
-Open WebUI Vision Tool
+Open WebUI Vision Tool v2
 Integrates local vision analysis (Google Coral + Intel NCS2) into OpenWebUI chats
+Enhanced with better file handling and debugging
 """
 
 import base64
 import json
 import requests
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field
 
 
@@ -27,7 +28,34 @@ class Tools:
 
     def __init__(self):
         self.valves = self.Valves()
-        self.file_handler = True
+        self.file_handler = True  # Tell OpenWebUI to pass files via __files__
+
+    def _get_file_path(self, __files__: Optional[List[Any]]) -> Optional[str]:
+        """Extract file path from OpenWebUI __files__ parameter"""
+        if not __files__ or len(__files__) == 0:
+            return None
+
+        file_info = __files__[0]
+
+        # Handle different OpenWebUI versions and formats
+        if isinstance(file_info, str):
+            # Simple string path
+            return file_info
+        elif isinstance(file_info, dict):
+            # Dictionary with various possible keys
+            return (
+                file_info.get('path') or
+                file_info.get('file', {}).get('path') if isinstance(file_info.get('file'), dict) else None or
+                file_info.get('url') or
+                file_info.get('filepath') or
+                file_info.get('file_path') or
+                file_info.get('id')  # Sometimes OpenWebUI uses file ID
+            )
+        elif hasattr(file_info, 'path'):
+            # Object with path attribute
+            return file_info.path
+
+        return None
 
     def _encode_image_from_path(self, file_path: str) -> str:
         """Read image file and encode as base64"""
@@ -61,8 +89,8 @@ class Tools:
 
     def detect_objects(
         self,
-        __user__: dict = {},
-        __files__: Optional[List[dict]] = None,
+        __user__: Optional[Dict] = None,
+        __files__: Optional[List[Any]] = None,
         __event_emitter__=None,
     ) -> str:
         """
@@ -74,22 +102,17 @@ class Tools:
         :param __files__: List of uploaded files (images)
         :return: Detected objects and their details
         """
-        if not __files__ or len(__files__) == 0:
-            return "Error: No image provided. Please upload an image before calling this tool."
-
-        # Get first file
-        file_info = __files__[0]
-
-        # Try multiple ways to get the file path
-        file_path = (
-            file_info.get('path') or
-            file_info.get('file', {}).get('path') or
-            file_info.get('url') or
-            file_info.get('filepath')
-        )
+        # Extract file path
+        file_path = self._get_file_path(__files__)
 
         if not file_path:
-            return f"Error: Could not access image file path. File info: {list(file_info.keys())}"
+            # Debug info
+            files_debug = f"Files received: {type(__files__)}, count: {len(__files__) if __files__ else 0}"
+            if __files__ and len(__files__) > 0:
+                files_debug += f", first item type: {type(__files__[0])}"
+                if isinstance(__files__[0], dict):
+                    files_debug += f", keys: {list(__files__[0].keys())}"
+            return f"Error: No image file path found. {files_debug}\n\nPlease upload an image before calling this tool."
 
         # Call vision API
         result = self._call_vision_api(
@@ -122,8 +145,9 @@ class Tools:
 
     def classify_image(
         self,
-        __user__: dict = {},
-        __files__: Optional[List[dict]] = None,
+        __user__: Optional[Dict] = None,
+        __files__: Optional[List[Any]] = None,
+        __event_emitter__=None,
         top_k: int = 5,
     ) -> str:
         """
@@ -136,14 +160,10 @@ class Tools:
         :param top_k: Number of top predictions to return (default: 5)
         :return: Top classification predictions
         """
-        if not __files__ or len(__files__) == 0:
-            return "Error: No image provided. Please upload an image."
-
-        file_info = __files__[0]
-        file_path = file_info.get('path') or file_info.get('file', {}).get('path')
+        file_path = self._get_file_path(__files__)
 
         if not file_path:
-            return "Error: Could not access image file path."
+            return "Error: No image provided. Please upload an image before calling this tool."
 
         # Call vision API
         result = self._call_vision_api(
@@ -171,8 +191,9 @@ class Tools:
 
     def extract_text(
         self,
-        __user__: dict = {},
-        __files__: Optional[List[dict]] = None,
+        __user__: Optional[Dict] = None,
+        __files__: Optional[List[Any]] = None,
+        __event_emitter__=None,
         languages: str = "en",
     ) -> str:
         """
@@ -185,14 +206,10 @@ class Tools:
         :param languages: Comma-separated language codes (default: 'en')
         :return: Extracted text
         """
-        if not __files__ or len(__files__) == 0:
-            return "Error: No image provided. Please upload an image."
-
-        file_info = __files__[0]
-        file_path = file_info.get('path') or file_info.get('file', {}).get('path')
+        file_path = self._get_file_path(__files__)
 
         if not file_path:
-            return "Error: Could not access image file path."
+            return "Error: No image provided. Please upload an image before calling this tool."
 
         # Call vision API
         result = self._call_vision_api(
@@ -221,8 +238,9 @@ class Tools:
 
     def detect_faces(
         self,
-        __user__: dict = {},
-        __files__: Optional[List[dict]] = None,
+        __user__: Optional[Dict] = None,
+        __files__: Optional[List[Any]] = None,
+        __event_emitter__=None,
     ) -> str:
         """
         Detect faces in an image using Intel NCS2.
@@ -233,14 +251,10 @@ class Tools:
         :param __files__: List of uploaded files (images)
         :return: Detected faces and their locations
         """
-        if not __files__ or len(__files__) == 0:
-            return "Error: No image provided. Please upload an image."
-
-        file_info = __files__[0]
-        file_path = file_info.get('path') or file_info.get('file', {}).get('path')
+        file_path = self._get_file_path(__files__)
 
         if not file_path:
-            return "Error: Could not access image file path."
+            return "Error: No image provided. Please upload an image before calling this tool."
 
         # Call vision API
         result = self._call_vision_api(
@@ -272,8 +286,8 @@ class Tools:
 
     def analyze_scene(
         self,
-        __user__: dict = {},
-        __files__: Optional[List[dict]] = None,
+        __user__: Optional[Dict] = None,
+        __files__: Optional[List[Any]] = None,
         __event_emitter__=None,
         include_text: bool = True,
         include_faces: bool = True,
@@ -292,21 +306,22 @@ class Tools:
         :param include_faces: Include face detection (default: True)
         :return: Comprehensive scene analysis
         """
-        if not __files__ or len(__files__) == 0:
-            return "Error: No image provided. Please upload an image before calling this tool."
-
-        file_info = __files__[0]
-
-        # Try multiple ways to get the file path
-        file_path = (
-            file_info.get('path') or
-            file_info.get('file', {}).get('path') or
-            file_info.get('url') or
-            file_info.get('filepath')
-        )
+        file_path = self._get_file_path(__files__)
 
         if not file_path:
-            return f"Error: Could not access image file path. Received: {file_info}"
+            # Enhanced debug info
+            files_debug = f"Files received: {type(__files__)}"
+            if __files__:
+                files_debug += f", count: {len(__files__)}"
+                if len(__files__) > 0:
+                    files_debug += f", first item: {type(__files__[0])}"
+                    if isinstance(__files__[0], dict):
+                        files_debug += f", keys: {list(__files__[0].keys())}"
+                        files_debug += f", values sample: {str(__files__[0])[:200]}"
+            else:
+                files_debug += " (None or empty)"
+
+            return f"Error: No image file path found.\n\nDebug info: {files_debug}\n\nPlease ensure you've uploaded an image before calling this tool."
 
         # Call vision API
         result = self._call_vision_api(
